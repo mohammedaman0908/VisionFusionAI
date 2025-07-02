@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multimodal Image Fusion using Vision Transformers</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Roboto+Slab:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-satellite"></i>
+                <span>ImageFusion</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#overview" class="nav-link">Overview</a>
+                <a href="#fusion" class="nav-link">Fusion</a>
+                <a href="#results" class="nav-link">Results</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <i class="fas fa-sun"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="overview">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Multimodal Image Fusion
+                    <span class="gradient-text">using Vision Transformers</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Advanced satellite image fusion combining VIS, IR, and NIR modalities using 
+                    attention mechanisms and multi-scale processing for enhanced remote sensing applications.
+                </p>
+                <div class="hero-features">
+                    <div class="feature-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Vision Transformer Architecture</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Multi-scale Fusion</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Quality Metrics</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-database"></i>
+                        <span>TNO Image Fusion Dataset</span>
+                    </div>
+                </div>
+                <button class="cta-button" onclick="scrollToFusion()">
+                    <span>Start Fusion</span>
+                    <i class="fas fa-arrow-down"></i>
+                </button>
+            </div>
+            <div class="hero-visual">
+                <div class="fusion-diagram">
+                    <div class="input-images">
+                        <div class="image-placeholder vis">
+                            <i class="fas fa-image"></i>
+                            <span>VIS</span>
+                        </div>
+                        <div class="image-placeholder ir">
+                            <i class="fas fa-thermometer-half"></i>
+                            <span>IR</span>
+                        </div>
+                        <div class="image-placeholder nir">
+                            <i class="fas fa-wave-square"></i>
+                            <span>NIR</span>
+                        </div>
+                    </div>
+                    <div class="fusion-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                        <span class="fusion-label">Vision Transformer</span>
+                    </div>
+                    <div class="output-image">
+                        <div class="image-placeholder fused">
+                            <i class="fas fa-magic"></i>
+                            <span>Fused</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Application -->
+    <main class="main-container" id="fusion">
+        <div class="app-header">
+            <h2>Image Fusion Interface</h2>
+            <p>Upload 2-3 satellite images for multimodal fusion processing</p>
+        </div>
+
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <div class="upload-card">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-content">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3>Drop Images Here</h3>
+                        <p>Or click to select satellite images</p>
+                        <p class="upload-hint">Support: VIS, IR, NIR images (PNG, JPG, TIFF)</p>
+                        <input type="file" id="fileInput" multiple accept="image/*" class="file-input">
+                        <button class="upload-button" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-folder-open"></i>
+                            Choose Files
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- File Preview -->
+                <div class="file-preview" id="filePreview" style="display: none;">
+                    <h4>Selected Images</h4>
+                    <div class="preview-grid" id="previewGrid"></div>
+                    <div class="upload-actions">
+                        <button class="clear-button" onclick="clearFiles()">
+                            <i class="fas fa-trash"></i>
+                            Clear All
+                        </button>
+                        <button class="process-button" id="processButton" onclick="processImages()">
+                            <i class="fas fa-magic"></i>
+                            Start Fusion
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Processing Status -->
+        <div class="processing-status" id="processingStatus" style="display: none;">
+            <div class="status-content">
+                <div class="spinner"></div>
+                <h3>Processing Images...</h3>
+                <p id="statusMessage">Initializing fusion process</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <section class="results-section" id="results" style="display: none;">
+            <div class="results-header">
+                <h3>Fusion Results</h3>
+                <div class="results-actions">
+                    <button class="download-button" id="downloadButton">
+                        <i class="fas fa-download"></i>
+                        Download Result
+                    </button>
+                    <button class="new-fusion-button" onclick="resetApplication()">
+                        <i class="fas fa-plus"></i>
+                        New Fusion
+                    </button>
+                </div>
+            </div>
+            
+            <div class="results-grid">
+                <!-- Input Images -->
+                <div class="input-results">
+                    <h4>Input Images</h4>
+                    <div class="input-images-grid" id="inputImagesGrid"></div>
+                </div>
+                
+                <!-- Fused Result -->
+                <div class="fused-result">
+                    <h4>Fused Image</h4>
+                    <div class="result-image-container">
+                        <img id="fusedImage" alt="Fused Result" class="result-image">
+                        <div class="image-overlay">
+                            <button class="zoom-button" onclick="toggleZoom()">
+                                <i class="fas fa-search-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Metrics -->
+            <div class="metrics-section">
+                <h4>Quality Metrics</h4>
+                <div class="metrics-grid" id="metricsGrid"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Dataset Information Section -->
+    <section class="dataset-section" id="dataset">
+        <div class="container">
+            <div class="dataset-content">
+                <h2>TNO Image Fusion Dataset</h2>
+                <p>This project utilizes the TNO Image Fusion Dataset, a comprehensive collection of multimodal satellite images for fusion research and development.</p>
+                <div class="dataset-details">
+                    <div class="dataset-info">
+                        <h3>Dataset Features</h3>
+                        <ul>
+                            <li>Multiple imaging modalities (VIS, IR, NIR)</li>
+                            <li>Aligned image pairs for fusion testing</li>
+                            <li>Ground truth data for validation</li>
+                            <li>Various scene types and conditions</li>
+                        </ul>
+                    </div>
+                    <div class="dataset-link">
+                        <a href="https://figshare.com/articles/dataset/TNO_Image_Fusion_Dataset/1008029?file=37872186" target="_blank" class="dataset-button">
+                            <i class="fas fa-external-link-alt"></i>
+                            Access TNO Dataset
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h2>Contact Information</h2>
+                    <p>Developed by Mohammed Aman for academic research in multimodal image fusion.</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:zaidali7f@gmail.com">zaidali7f@gmail.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fab fa-linkedin"></i>
+                            <a href="https://www.linkedin.com/in/mohammed-aman-6105b7253/" target="_blank">LinkedIn Profile</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-image">
+                    <img src="{{ url_for('static', filename='CEO.jpeg') }}" 
+                         alt="Mohammed Aman" 
+                         class="profile-image"
+                         loading="eager"
+                         onload="console.log('CEO image loaded successfully')"
+                         onerror="console.error('CEO image failed to load')">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <div class="footer-logo">
+                    <i class="fas fa-satellite"></i>
+                    <span>ImageFusion ViT</span>
+                </div>
+                <p>Advanced multimodal satellite image fusion using Vision Transformers</p>
+            </div>
+            <div class="footer-links">
+                <div class="link-group">
+                    <h5>Project</h5>
+                    <a href="#overview">Overview</a>
+                    <a href="#fusion">Fusion Tool</a>
+                    <a href="#results">Results</a>
+                </div>
+                <div class="link-group">
+                    <h5>Technology</h5>
+                    <span>Vision Transformers</span>
+                    <span>Multi-scale Fusion</span>
+                    <span>TNO Dataset</span>
+                </div>
+                <div class="link-group">
+                    <h5>Contact</h5>
+                    <a href="mailto:zaidali7f@gmail.com">
+                        <i class="fas fa-envelope"></i>
+                        Email
+                    </a>
+                    <a href="https://www.linkedin.com/in/mohammed-aman-6105b7253/" target="_blank">
+                        <i class="fab fa-linkedin"></i>
+                        LinkedIn
+                    </a>
+                    <a href="https://figshare.com/articles/dataset/TNO_Image_Fusion_Dataset/1008029?file=37872186" target="_blank">
+                        <i class="fas fa-database"></i>
+                        TNO Dataset
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Mohammed Aman - Multimodal Image Fusion using Vision Transformers</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox" style="display: none;">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeLightbox()">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="lightboxImage" alt="Enlarged view">
+        </div>
+    </div>
+
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
